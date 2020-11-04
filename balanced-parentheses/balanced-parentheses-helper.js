@@ -3,12 +3,12 @@
  * @param {string} expression The first number.
  * @return {boolean} The sum of the two numbers.
  */
-export const isBalanced = (expression) => {
+export const isBalanced = expression => {
   console.log("EXPRESSION TO CHECK: ", expression);
-  if (!expression || expression.length == 0) return false;
+  if (!expression || expression.length === 0) return false;
 
   const stack = [];
-  const ParanthesisMap = {
+  const paranthesisMap = {
     "(": ")",
     "{": "}",
     "[": "]",
@@ -16,10 +16,10 @@ export const isBalanced = (expression) => {
   const closeParantheses = [")", "}", "]"];
 
   [...expression].every((item) => {
-    if (item in ParanthesisMap) stack.push(item);
+    if (item in paranthesisMap) stack.push(item);
     else if (
       closeParantheses.includes(item) &&
-      item != ParanthesisMap[stack.pop()]
+      item != paranthesisMap[stack.pop()]
     )
       return false;
   });
