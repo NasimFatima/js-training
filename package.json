@@ -3,12 +3,16 @@
   "version": "1.0.0",
   "main": "src/index.js",
   "license": "MIT",
-  "type" : "module",
+  "type": "module",
   "devDependencies": {
     "eslint": "^7.12.1",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-react": "^7.21.5",
     "prettier": "2.1.2"
+  },
+  "dependencies": {
+    "d3": "^6.2.0",
+    "yargs": "^16.1.0"
   }
 }
