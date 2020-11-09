@@ -3,8 +3,11 @@
 
 export const getShortMonthFromString = (dateString) => {
     try {
+        let monthName = ''
         const parts = dateString.split('/');
-        return getMonth(new Date(parts[0], parts[1]-1), 'short');
+        if (parts.lenth > 0)
+            monthName = getMonth(new Date(parts[0], parts[1]-1), 'short');
+        return monthName
     }
     catch(err) {
         console.error(`EXCEPTION IN DATE PARSING ${err}`)
@@ -33,11 +36,4 @@ function  getMonth(dateobj, monthFormat='long') {
     
 }
 
-export const validateYearAndMonth = dateString => {
-    return /^(19|20)\d{2}\/(0?[1-9]|1\d|2\d|3[01])$/.test(dateString)
-}
-
-export const validateYear = dateString => {
-    return /^(19|20)\d{2}$/.test(dateString)
-}
 

@@ -1,7 +1,5 @@
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-const fs = require("fs");
-const d3 = require("d3");
+import fs from "fs"
+import d3 from "d3"
 import { WEATHER_FILE_HEADERS } from "./constants.js";
 
 /**
@@ -11,8 +9,8 @@ import { WEATHER_FILE_HEADERS } from "./constants.js";
 export class FilReader {
   /**
    * Constructor
-   * @param { string} directory
-   * @param {format} format
+   * @param { string } directory -path of files
+   * @param { format } format -format to match file names
    */
   constructor(directory, format) {
     this.directory = directory;
@@ -21,14 +19,14 @@ export class FilReader {
 
   /**
    * filter directory by given format
-   * @return {matchingFileNames}
+   * @return { matchingFileNames }
    */
   readFileNamesByFormat() {
     let matchingFileNames = [];
     try {
       matchingFileNames = fs
         .readdirSync(this.directory)
-        .filter((file) => file.includes(this.format) === true);
+        .filter((file) => file.includes(this.format));
     } catch (err) {
       if (err.code === "ENOENT") {
         console.log("File not found!");
@@ -41,25 +39,23 @@ export class FilReader {
 
   /**
    * Read Content of filtered files
-   * @return {weatherDataMap}
+   * @param { Array } columns -Names of columns to map
+   * @return { weatherDataMap } 
    */
-  readFileContent() {
-    let weatherObj = {};
+  readFileContent(columns) {
     const weatherDataMap = [];
     const matchingFileNames = this.readFileNamesByFormat();
-
-    if (matchingFileNames.length < 1) {
-      return weatherDataMap;
-    }
-
     matchingFileNames.forEach((file) => {
+      let itemIndex;
       const data = fs.readFileSync(this.directory + file, "utf-8");
       const fileData = d3.csvParseRows(data);
-      for (let j = 1; j < fileData.length; j++) {
-        weatherObj = Object.keys(WEATHER_FILE_HEADERS).reduce(
-          (acc, value, i) => ((acc[value] = fileData[j][i]), acc),
-          {}
-        );
+      const headers = Object.keys(WEATHER_FILE_HEADERS)
+      for (let line = 1; line < fileData.length; line++) {
+        const weatherObj = {};
+        columns.forEach(column => {
+          itemIndex = headers.indexOf(column)
+          weatherObj[column] = fileData[line][itemIndex]
+        })
         weatherDataMap.push(weatherObj);
       }
     });

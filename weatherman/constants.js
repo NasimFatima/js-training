@@ -25,3 +25,5 @@ export const WEATHER_FILE_HEADERS = {
     "WindDirDegree": " WindDirDegree"
 }
 
+export const YEAR_WEATHER_STATS_COLUMNS = ['Date','MaxTemperatureC' , 'MinTemperatureC' , 'MaxHumidity'  ]
+export const MONTH_WEATHER_STATS_COLUMNS  = ['Date','MaxTemperatureC' , 'MinTemperatureC' , 'MeanHumidity' ]

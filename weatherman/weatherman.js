@@ -1,6 +1,7 @@
-import { getMinMaxObj, getAvgObj } from "./utils/mathUtils.js"
+import { getMaxObj, getMinObj, getAvgObj } from "./utils/mathUtils.js"
 import { getYear, formattedDateForOutput, getShortMonthFromString } from "./utils/dateUtils.js"
 import { FilReader } from "./fileReader.js"
+import { YEAR_WEATHER_STATS_COLUMNS, MONTH_WEATHER_STATS_COLUMNS} from "./constants.js";
 
 /**
  * WeatherMan class .
@@ -9,54 +10,70 @@ export class WeatherMan {
 
     /**
      * Function Constructor.
-     * @param {String} directoryPath Path where files are stored.
-     * @param {String} date Date in form of year or Y/m.
-     * @param {boolean} month
-     * @param {string} calculateTask
+     * @param { String } directoryPath -Path where files are stored.
+     * @param { String } date -Date in form of year or Y/m.
      */
-    constructor(directoryPath, date, month=False, calculateTask) {
+    constructor(directoryPath, date) {
         this.directoryPath = directoryPath
         this.date = date
-        this.withMonth = month
-        this.calculateTask = calculateTask
     } 
 
      /**
      * Parse date string 
-     * @param {boolean} withMonth Path where files are stored.
-     * @return {formatToMatchFiles}
      */
     parseDate() {
         this.formatToMatchFiles = getYear(this.date)
         if (this.withMonth) {
             const month = getShortMonthFromString(this.date)
+            console.log(month)
             if (month)
                 this.formatToMatchFiles += `_${month}`
+            else 
+                this.formatToMatchFiles = ''
         }
-        return this.formatToMatchFiles
     }
 
     /**
      * Read Files and calculate weather Stats
+     * @param { string } columns -Get data of given columns
      */
-    getWeatherStats() {
-        this.weatherStats = {
-            'Max' : {'MaxTemperatureC' : {}, 'MinTemperatureC' : {}, 'MaxHumidity' : {}},
-            'Avg' : {'MaxTemperatureC' : {}, 'MinTemperatureC' : {}, 'MeanHumidity' : {}}
-        }
+    readFile(columns) {
+        this.weatherData = []
         this.parseDate()
-        if (!this.formatToMatchFiles) {
+        if (this.formatToMatchFiles) {
+            const reader = new FilReader(this.directoryPath, this.formatToMatchFiles)
+            this.weatherData = reader.readFileContent(columns)
+        }
+        else {
             console.log("INVALID DATE FORMAT", this.date)
         }
-        const reader = new FilReader(this.directoryPath, this.formatToMatchFiles)
-        this.weatherData = reader.readFileContent()
+    }
 
+    /**
+     * Read Yearly weather Stats
+     */
+    calcualteYearStats() {
+        this.readFile(YEAR_WEATHER_STATS_COLUMNS)
         if (this.weatherData.length > 0 ) {
-            if (this.calculateTask === '-e') this.getHighLowTempAndHumidity()
-            else this.getAvgTempAndHumidity()
+            this.getHighLowTempAndHumidity()
         }
         else {
             console.log("NO DATA FOUND FOR YEAR ", this.date)
+        }
+    }
+
+    /**
+     * Read Monthly weather Stats
+     */
+    calcualteMonthStats() {
+        this.withMonth = true
+        this.monthWeatherStats = {}
+        this.readFile(MONTH_WEATHER_STATS_COLUMNS, true)
+        if (this.weatherData.length > 0 ) {
+            this.getAvgTempAndHumidity()
+        }
+        else {
+            console.log("NO AVERGE DATA FOUND FOR ", this.date)
         }
     }
 
@@ -65,14 +82,15 @@ export class WeatherMan {
      * Highest Humidity 
      */
     getHighLowTempAndHumidity() {
-        for (const property of Object.keys(this.weatherStats.Max)) {
+        this.yearStats = {}
+        YEAR_WEATHER_STATS_COLUMNS.forEach(property => {
             if (property != 'MinTemperatureC') {
-                this.weatherStats.Max[property] = getMinMaxObj(this.weatherData, property)
+                this.yearStats[property] = getMaxObj(this.weatherData, property)
             }
             else {
-                this.weatherStats.Max[property] = getMinMaxObj(this.weatherData, property, false)
+                this.yearStats[property] = getMinObj(this.weatherData, property)
             }
-        }
+        });
         this.printHighLowTempAndHumidity()
     }
 
@@ -81,10 +99,10 @@ export class WeatherMan {
      * Average Mean Humidity 
      */
     getAvgTempAndHumidity() {
-        for (const property of Object.keys(this.weatherStats.Avg)) {
-            this.weatherStats.Avg[property] = getAvgObj(this.weatherData, property)
-        }
-        this.printAvgTempAndHumidity()  
+        MONTH_WEATHER_STATS_COLUMNS.forEach(property => {
+            this.monthWeatherStats[property] = getAvgObj(this.weatherData, property)
+        })
+        this.printAvgMaxMinTempAndHumidity()  
     }
 
     /**
@@ -92,10 +110,10 @@ export class WeatherMan {
      * Highest Humidity in given format
      */
     printHighLowTempAndHumidity() {
-        const stats = this.weatherStats.Max
+        const stats = this.yearStats
         console.log("****************************************")
         console.log(`HIGHEST: ${stats.MaxTemperatureC.MaxTemperatureC}C on  ${formattedDateForOutput(stats.MaxTemperatureC.Date)}`)
-        console.log(`LOWEST: ${stats.MaxTemperatureC.MaxTemperatureC}C on  ${formattedDateForOutput(stats.MinTemperatureC.Date)}`)
+        console.log(`LOWEST: ${stats.MinTemperatureC.MinTemperatureC}C on  ${formattedDateForOutput(stats.MinTemperatureC.Date)}`)
         console.log(`HIGHEST HUMIDITY: ${stats.MaxHumidity.MaxHumidity}% on  ${formattedDateForOutput(stats.MaxHumidity.Date)}`)
         console.log("****************************************")
     }
@@ -104,8 +122,8 @@ export class WeatherMan {
      * Print Average MaxTemperature, Average Lowest Temperature and
      * Average Mean Humidity in given format 
      */
-    printAvgTempAndHumidity() {
-        const stats = this.weatherStats.Avg
+    printAvgMaxMinTempAndHumidity() {
+        const stats = this.monthWeatherStats
         console.log("****************************************")
         console.log(`HIGHEST AVERGAE: ${stats.MaxTemperatureC.MaxTemperatureC}C on  ${formattedDateForOutput(stats.MaxTemperatureC.Date)}`)
         console.log(`LOWEST AVERGAE: ${stats.MaxTemperatureC.MaxTemperatureC}C on  ${formattedDateForOutput(stats.MinTemperatureC.Date)}`)
