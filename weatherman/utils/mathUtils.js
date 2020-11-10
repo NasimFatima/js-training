@@ -1,33 +1,43 @@
-/* eslint-disable require-jsdoc */
-
+/**
+ *
+ * @param { Array } objArray - Array of objects
+ * @param { String } property - calculate max obj for this property
+ */
 export const getMaxObj = (objArray, property) => {
-    const data = removeEmptyValue(objArray, property)
-    if (data.length > 0) {
-        return data.reduce((max, elem) => Number(max[property]) > Number(elem[property]) ? max : elem)
-    }
-    return data   
-}
+  return objArray.reduce((max, elem) =>
+    Number(max[property]) > Number(elem[property]) ? max : elem
+  );
+};
 
+/**
+ *
+ * @param { Array } objArray - Array of objects
+ * @param { String } property - calculate min obj for this property
+ */
 export const getMinObj = (objArray, property) => {
-    const data = removeEmptyValue(objArray, property)
-    if (data.length > 0) {
-        return data.reduce((min, elem) => Number(min[property]) < Number(elem[property]) ? min : elem)
-    }
-    return data   
-}
+  return objArray.reduce((min, elem) =>
+    Number(min[property]) < Number(elem[property]) ? min : elem
+  );
+};
 
+/**
+ *
+ * @param { Array } objArray - Array of objects
+ * @param { String } property - calculate Avg for this property
+ */
 export const getAvgObj = (objArray, property) => {
-    const data = removeEmptyValue(objArray, property)
-    const average = (data.reduce((sum, elem) => sum + elem[property], 0) / data.length) * 100
-    const closest = data.reduce((a, b) => 
-        Math.abs(average - a[property]) <= Math.abs(average - b[property])
-            ? a
-            : b
-    );
-    return closest
-}
+  return Math.trunc(
+    objArray.reduce((sum, elem) => sum + Number(elem[property]), 0) /
+      objArray.length
+  );
+};
 
-function removeEmptyValue(data, property) {
-    return data.filter((item) => item[property] != '')
-}
+/**
+ *
+ * @param { Array } objArray - Array of objects
+ * @param { String } property - Remove lines where this property is empty
+ */
+export const removeEmptyValue = (data, property) => {
+  return data.filter((item) => item[property] != "");
+};
 

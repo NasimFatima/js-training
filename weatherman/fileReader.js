@@ -1,5 +1,5 @@
-import fs from "fs"
-import d3 from "d3"
+import fs from "fs";
+import d3 from "d3";
 import { WEATHER_FILE_HEADERS } from "./constants.js";
 
 /**
@@ -9,8 +9,8 @@ import { WEATHER_FILE_HEADERS } from "./constants.js";
 export class FilReader {
   /**
    * Constructor
-   * @param { string } directory -path of files
-   * @param { format } format -format to match file names
+   * @param { string } directory - path of files
+   * @param { format } format - format to match file names
    */
   constructor(directory, format) {
     this.directory = directory;
@@ -21,7 +21,7 @@ export class FilReader {
    * filter directory by given format
    * @return { matchingFileNames }
    */
-  readFileNamesByFormat() {
+  readFileNamesByFormat = () => {
     let matchingFileNames = [];
     try {
       matchingFileNames = fs
@@ -35,31 +35,31 @@ export class FilReader {
       }
     }
     return matchingFileNames;
-  }
+  };
 
   /**
    * Read Content of filtered files
-   * @param { Array } columns -Names of columns to map
-   * @return { weatherDataMap } 
+   * @param { Array } columns - Names of columns to map
+   * @return { weatherDataMap }
    */
-  readFileContent(columns) {
+  readFileContent = (columns) => {
     const weatherDataMap = [];
     const matchingFileNames = this.readFileNamesByFormat();
     matchingFileNames.forEach((file) => {
       let itemIndex;
       const data = fs.readFileSync(this.directory + file, "utf-8");
       const fileData = d3.csvParseRows(data);
-      const headers = Object.keys(WEATHER_FILE_HEADERS)
+      const headers = fileData[0];
       for (let line = 1; line < fileData.length; line++) {
         const weatherObj = {};
-        columns.forEach(column => {
-          itemIndex = headers.indexOf(column)
-          weatherObj[column] = fileData[line][itemIndex]
-        })
+        columns.forEach((column) => {
+          itemIndex = headers.indexOf(WEATHER_FILE_HEADERS[column]);
+          weatherObj[column] = fileData[line][itemIndex];
+        });
         weatherDataMap.push(weatherObj);
       }
     });
     return weatherDataMap;
-  }
+  };
 }
 

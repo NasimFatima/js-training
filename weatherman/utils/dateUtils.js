@@ -1,39 +1,39 @@
-/* eslint-disable require-jsdoc */
+import moment from "moment";
 
+/**
+ * @param { string } inputDate  - input date
+ * @param { string } inputFormat - format of input date
+ * @param { string } monthFormat - format of return month "MMMMM" in case of
+ * full month name "MMM" in case of short name
+ */
+export const parseMonthArgsInputToMonth = (
+  inputDate,
+  inputFormat = "Y-M-D",
+  monthFormat = "MMMM"
+) => {
+  const parsedMonthDate = moment(inputDate, inputFormat, true);
+  return parsedMonthDate.isValid()
+    ? parsedMonthDate.format(monthFormat)
+    : undefined;
+};
 
-export const getShortMonthFromString = (dateString) => {
-    try {
-        let monthName = ''
-        const parts = dateString.split('/');
-        if (parts.lenth > 0)
-            monthName = getMonth(new Date(parts[0], parts[1]-1), 'short');
-        return monthName
-    }
-    catch(err) {
-        console.error(`EXCEPTION IN DATE PARSING ${err}`)
-    }
+/**
+ *
+ * @param { string } inputDate - input date
+ * @param { string } format - format of input date
+ */
+export const parseYearArgsInputToYear = (inputDate, format) => {
+  const parsedYearDate = moment(inputDate, format, true);
+  return parsedYearDate.isValid() ? String(parsedYearDate.year()) : undefined;
+};
 
-}
-
-export const getYear = dateString => {
-    return parseDate(dateString).getFullYear()
-}
-
-export const formattedDateForOutput = dateString => {
-    
-    const date = parseDate(dateString)
-    return `${getMonth(date)} ${date.getDay()}`
-}
-
-
-function parseDate (dateString) {
-    return (new Date(dateString))
-}
-
-
-function  getMonth(dateobj, monthFormat='long') {
-    return dateobj.toLocaleString('default', {month: monthFormat})
-    
-}
-
+/**
+ *
+ * @param { string } inputDate - input Date
+ */
+export const parseDateToMonthDay = (inputDate) => {
+  const parsedMonthDate = parseMonthArgsInputToMonth(inputDate);
+  const parsedDay = moment(inputDate, "Y-M-D", true).day();
+  return parsedMonthDate + parsedDay;
+};
 
