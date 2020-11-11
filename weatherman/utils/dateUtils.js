@@ -36,4 +36,3 @@ export const parseDateToMonthDay = (inputDate) => {
   const parsedDay = moment(inputDate, "Y-M-D", true).day();
   return parsedMonthDate + parsedDay;
 };
-

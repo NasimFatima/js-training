@@ -28,7 +28,7 @@ export const getMinObj = (objArray, property) => {
 export const getAvgObj = (objArray, property) => {
   return Math.trunc(
     objArray.reduce((sum, elem) => sum + Number(elem[property]), 0) /
-      objArray.length
+    objArray.length
   );
 };
 
@@ -40,4 +40,3 @@ export const getAvgObj = (objArray, property) => {
 export const removeEmptyValue = (data, property) => {
   return data.filter((item) => item[property] != "");
 };
-

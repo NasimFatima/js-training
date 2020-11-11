@@ -13,6 +13,7 @@ import { FilReader } from "./fileReader.js";
 import {
   YEAR_WEATHER_STATS_COLUMNS,
   MONTH_WEATHER_STATS_COLUMNS,
+  MIN_MAX_FUNCTIONS_MAPPING
 } from "./constants.js";
 
 /**
@@ -35,7 +36,7 @@ export class WeatherMan {
   parseDate() {
     let format = "YYYY";
     this.formatToMatchFiles = "";
-    if (this.withMonth) {
+    if (this.hasMonth) {
       format = "Y/M";
       const month = parseMonthArgsInputToMonth(this.date, format, "MMM");
       if (month) this.formatToMatchFiles = `_${month}`;
@@ -76,7 +77,7 @@ export class WeatherMan {
    * Read Monthly weather Stats
    */
   calcualteMonthStats() {
-    this.withMonth = true;
+    this.hasMonth = true;
     this.monthWeatherStats = {};
     this.readFile(MONTH_WEATHER_STATS_COLUMNS, true);
     if (this.weatherData.length > 0) {
@@ -94,11 +95,7 @@ export class WeatherMan {
     this.yearStats = {};
     YEAR_WEATHER_STATS_COLUMNS.forEach((property) => {
       const data = removeEmptyValue(this.weatherData, property);
-      if (property != "MinTemperatureC") {
-        this.yearStats[property] = getMaxObj(data, property);
-      } else {
-        this.yearStats[property] = getMinObj(data, property);
-      }
+      this.yearStats[property] = MIN_MAX_FUNCTIONS_MAPPING[property](data, property)
     });
     this.printHighLowTempAndHumidity();
   }
@@ -123,18 +120,15 @@ export class WeatherMan {
     const stats = this.yearStats;
     console.log("****************************************");
     console.log(
-      `HIGHEST: ${
-        stats.MaxTemperatureC.MaxTemperatureC
+      `HIGHEST: ${stats.MaxTemperatureC.MaxTemperatureC
       }C on  ${parseDateToMonthDay(stats.MaxTemperatureC.Date)}`
     );
     console.log(
-      `LOWEST: ${
-        stats.MinTemperatureC.MinTemperatureC
+      `LOWEST: ${stats.MinTemperatureC.MinTemperatureC
       }C on  ${parseDateToMonthDay(stats.MinTemperatureC.Date)}`
     );
     console.log(
-      `HIGHEST HUMIDITY: ${
-        stats.MaxHumidity.MaxHumidity
+      `HIGHEST HUMIDITY: ${stats.MaxHumidity.MaxHumidity
       }% on  ${parseDateToMonthDay(stats.MaxHumidity.Date)}`
     );
     console.log("****************************************");
@@ -153,4 +147,3 @@ export class WeatherMan {
     console.log("****************************************");
   }
 }
-

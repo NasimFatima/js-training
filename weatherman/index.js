@@ -55,4 +55,3 @@ function buildPath(directoryName) {
   const __dirname = path.resolve(path.dirname(""));
   return path.join(__dirname, directoryName + "/");
 }
-
