@@ -54,7 +54,8 @@ export class FilReader {
         const weatherObj = {};
         columns.forEach((column) => {
           itemIndex = headers.indexOf(WEATHER_FILE_HEADERS[column]);
-          weatherObj[column] = fileData[line][itemIndex];
+          if (column === 'Date') weatherObj[column] = fileData[line][itemIndex];
+          else weatherObj[column] = Number(fileData[line][itemIndex]);
         });
         weatherDataMap.push(weatherObj);
       }

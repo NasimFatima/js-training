@@ -13,7 +13,8 @@ import { FilReader } from "./fileReader.js";
 import {
   YEAR_WEATHER_STATS_COLUMNS,
   MONTH_WEATHER_STATS_COLUMNS,
-  MIN_MAX_FUNCTIONS_MAPPING
+  MIN_MAX_FUNCTIONS_MAPPING,
+  YEAR_WEATHER_STATS_OUTPUT_MAPPING
 } from "./constants.js";
 
 /**
@@ -44,6 +45,7 @@ export class WeatherMan {
     this.formatToMatchFiles =
       String(parseYearArgsInputToYear(this.date, format)) +
       this.formatToMatchFiles;
+    console.log(this.formatToMatchFiles)
   }
 
   /**
@@ -66,11 +68,11 @@ export class WeatherMan {
    */
   calcualteYearStats() {
     this.readFile(YEAR_WEATHER_STATS_COLUMNS);
-    if (this.weatherData.length > 0) {
-      this.getHighLowTempAndHumidity();
-    } else {
+    if (this.weatherData.length < 1) {
       console.log("NO DATA FOUND FOR ", this.date);
+      return;
     }
+    this.getHighLowTempAndHumidity()
   }
 
   /**
@@ -79,12 +81,12 @@ export class WeatherMan {
   calcualteMonthStats() {
     this.hasMonth = true;
     this.monthWeatherStats = {};
-    this.readFile(MONTH_WEATHER_STATS_COLUMNS, true);
-    if (this.weatherData.length > 0) {
-      this.getAvgMaxMinTempAndHumidity();
-    } else {
+    this.readFile(MONTH_WEATHER_STATS_COLUMNS);
+    if (this.weatherData.length < 1) {
       console.log("NO AVERGE DATA FOUND FOR ", this.date);
+      return;
     }
+    this.getAvgMaxMinTempAndHumidity()
   }
 
   /**
@@ -93,7 +95,7 @@ export class WeatherMan {
    */
   getHighLowTempAndHumidity() {
     this.yearStats = {};
-    YEAR_WEATHER_STATS_COLUMNS.forEach((property) => {
+    YEAR_WEATHER_STATS_OUTPUT_MAPPING.forEach((property) => {
       const data = removeEmptyValue(this.weatherData, property);
       this.yearStats[property] = MIN_MAX_FUNCTIONS_MAPPING[property](data, property)
     });

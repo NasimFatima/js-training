@@ -20,6 +20,7 @@ export const WEATHER_FILE_HEADERS = {
 };
 
 export const YEAR_WEATHER_STATS_COLUMNS = [
+  HEADERS.Date,
   HEADERS.MaxTemperatureC,
   HEADERS.MinTemperatureC,
   HEADERS.MaxHumidity,
@@ -29,6 +30,12 @@ export const MONTH_WEATHER_STATS_COLUMNS = [
   HEADERS.MaxTemperatureC,
   HEADERS.MinTemperatureC,
   HEADERS.MeanHumidity,
+];
+
+export const YEAR_WEATHER_STATS_OUTPUT_MAPPING = [
+  HEADERS.MaxTemperatureC,
+  HEADERS.MinTemperatureC,
+  HEADERS.MaxHumidity,
 ];
 
 export const MIN_MAX_FUNCTIONS_MAPPING = {

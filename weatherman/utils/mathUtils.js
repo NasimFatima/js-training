@@ -5,7 +5,7 @@
  */
 export const getMaxObj = (objArray, property) => {
   return objArray.reduce((max, elem) =>
-    Number(max[property]) > Number(elem[property]) ? max : elem
+    max[property] > elem[property] ? max : elem
   );
 };
 
@@ -16,7 +16,7 @@ export const getMaxObj = (objArray, property) => {
  */
 export const getMinObj = (objArray, property) => {
   return objArray.reduce((min, elem) =>
-    Number(min[property]) < Number(elem[property]) ? min : elem
+    min[property] < elem[property] ? min : elem
   );
 };
 
@@ -27,7 +27,7 @@ export const getMinObj = (objArray, property) => {
  */
 export const getAvgObj = (objArray, property) => {
   return Math.trunc(
-    objArray.reduce((sum, elem) => sum + Number(elem[property]), 0) /
+    objArray.reduce((sum, elem) => sum + elem[property], 0) /
     objArray.length
   );
 };

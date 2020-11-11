@@ -12,9 +12,7 @@ export const parseMonthArgsInputToMonth = (
   monthFormat = "MMMM"
 ) => {
   const parsedMonthDate = moment(inputDate, inputFormat, true);
-  return parsedMonthDate.isValid()
-    ? parsedMonthDate.format(monthFormat)
-    : undefined;
+  return parsedMonthDate.isValid() && parsedMonthDate.format(monthFormat)
 };
 
 /**
@@ -24,7 +22,7 @@ export const parseMonthArgsInputToMonth = (
  */
 export const parseYearArgsInputToYear = (inputDate, format) => {
   const parsedYearDate = moment(inputDate, format, true);
-  return parsedYearDate.isValid() ? String(parsedYearDate.year()) : undefined;
+  return parsedYearDate.isValid() && String(parsedYearDate.year())
 };
 
 /**
