@@ -19,6 +19,8 @@ module.exports = {
     'plugins': [
       'react',
     ],
+    "parser": "babel-eslint",
     'rules': {
+      use: ["babel-loader", "eslint-loader"]
     },
   };
